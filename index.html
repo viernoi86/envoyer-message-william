@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envoyer à William</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Envoyer un message à William</h1>
+  <textarea id="message" placeholder="Tape ton message ici..."></textarea>
+  <br>
+  <button onclick="envoyerMessage()">Envoyer à William</button>
+
+  <script>
+    function envoyerMessage() {
+      const message = document.getElementById("message").value;
+
+      // Vérifier si le message n'est pas vide
+      if (message.trim() === "") {
+        alert("Le message est vide. Tape quelque chose !");
+        return;
+      }
+
+      // Envoyer le message au webhook Discord
+      fetch("https://discord.com/api/webhooks/1365367502586122330/tznyZlteXzlC7r4APfy2cIM8eGkFVa810u2WDuswUQp6hNRyf58sh1-BXopRFS3DY7PG", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content: message // Le contenu du message envoyé
+        })
+      }).then(response => {
+        if (response.ok) {
+          alert("Message envoyé à William !");
+        } else {
+          alert("Erreur lors de l'envoi du message.");
+        }
+      }).catch(error => {
+        alert("Une erreur s'est produite : " + error);
+      });
+    }
+  </script>
+</body>
+</html>
