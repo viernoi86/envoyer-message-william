@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Envoyer à William</title>
+  <title>Envoyer un message à un destinataire</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,7 +15,11 @@
       height: 150px;
       margin-bottom: 10px;
     }
-    button {
+    .buttons {
+      margin-top: 20px;
+    }
+    .buttons button {
+      margin: 5px;
       padding: 10px 20px;
       background-color: #4CAF50;
       color: white;
@@ -23,20 +27,70 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    button:hover {
+    .buttons button:hover {
       background-color: #45a049;
+    }
+    button#envoyer {
+      margin-top: 20px;
+      background-color: #008CBA;
+    }
+    button#envoyer:hover {
+      background-color: #005F8C;
+    }
+    #destinataire-info {
+      margin-top: 20px;
+    }
+    #destinataire-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Envoyer un message à William</h1>
+  <h1>Envoyer un message à un destinataire</h1>
   <textarea id="message" placeholder="Tape ton message ici..."></textarea>
-  <br>
-  <button onclick="envoyerMessage()">Envoyer à William</button>
+  
+  <div class="buttons">
+    <button onclick="selectionnerDestinataire('Maman', 'https://discord.com/api/webhooks/1365373680225488926/MCbBTyzOk2WymcFlD7xxnLsWex38beWIlIJhJull2aywZ01GtxAOP_rtB3lbPHCMPkaH', 'https://via.placeholder.com/100?text=Maman')">Maman</button>
+    <button onclick="selectionnerDestinataire('Papa', 'https://discord.com/api/webhooks/1365367502586122330/tznyZlteXzlC7r4APfy2cIM8eGkFVa810u2WDuswUQp6hNRyf58sh1-BXopRFS3DY7PG', 'https://via.placeholder.com/100?text=Papa')">Papa</button>
+    <button onclick="selectionnerDestinataire('Paloma', 'https://discord.com/api/webhooks/1365373655688806440/Q5EvTL4ksguY5BFG9YM6qyp2THTK0vy0J7oFctZ95BPI3tyNcimE-1frLZbx9tfjZ1oJ', 'https://via.placeholder.com/100?text=Paloma')">Paloma</button>
+  </div>
+  
+  <div id="destinataire-info">
+    <h3 id="destinataire-nom">Aucun destinataire sélectionné</h3>
+    <img id="destinataire-image" src="" alt="" style="display:none;">
+  </div>
+  
+  <button id="envoyer" onclick="envoyerMessage()">Envoyer</button>
 
   <script>
+    let destinataireSelectionne = null;
+    let webhookSelectionne = null;
+
+    function selectionnerDestinataire(nom, webhook, image) {
+      destinataireSelectionne = nom;
+      webhookSelectionne = webhook;
+
+      // Mettre à jour le nom et l'image du destinataire
+      document.getElementById("destinataire-nom").innerText = "Destinataire : " + nom;
+      const imageElement = document.getElementById("destinataire-image");
+      imageElement.src = image;
+      imageElement.style.display = "block";
+
+      alert("Destinataire sélectionné : " + nom);
+    }
+
     function envoyerMessage() {
       const message = document.getElementById("message").value;
+
+      // Vérifier si un destinataire est sélectionné
+      if (!destinataireSelectionne || !webhookSelectionne) {
+        alert("Veuillez sélectionner un destinataire avant d'envoyer !");
+        return;
+      }
 
       // Vérifier si le message n'est pas vide
       if (message.trim() === "") {
@@ -44,8 +98,8 @@
         return;
       }
 
-      // Envoyer le message au webhook Discord
-      fetch("https://discord.com/api/webhooks/1365367502586122330/tznyZlteXzlC7r4APfy2cIM8eGkFVa810u2WDuswUQp6hNRyf58sh1-BXopRFS3DY7PG", {
+      // Envoyer le message au webhook du destinataire
+      fetch(webhookSelectionne, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -55,7 +109,7 @@
         })
       }).then(response => {
         if (response.ok) {
-          alert("Message envoyé à William !");
+          alert("Message envoyé à " + destinataireSelectionne + " !");
         } else {
           alert("Erreur lors de l'envoi du message.");
         }
