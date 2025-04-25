@@ -30,22 +30,20 @@
     .buttons button:hover {
       background-color: #45a049;
     }
-    button#envoyer {
+    #envoyer {
       margin-top: 20px;
       background-color: #008CBA;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
     }
-    button#envoyer:hover {
+    #envoyer:hover {
       background-color: #005F8C;
     }
     #destinataire-info {
       margin-top: 20px;
-    }
-    #destinataire-image {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-top: 10px;
     }
   </style>
 </head>
@@ -54,14 +52,13 @@
   <textarea id="message" placeholder="Tape ton message ici..."></textarea>
   
   <div class="buttons">
-    <button onclick="selectionnerDestinataire('Maman', 'https://discord.com/api/webhooks/1365373680225488926/MCbBTyzOk2WymcFlD7xxnLsWex38beWIlIJhJull2aywZ01GtxAOP_rtB3lbPHCMPkaH', 'https://via.placeholder.com/100?text=Maman')">Maman</button>
-    <button onclick="selectionnerDestinataire('Papa', 'https://discord.com/api/webhooks/1365367502586122330/tznyZlteXzlC7r4APfy2cIM8eGkFVa810u2WDuswUQp6hNRyf58sh1-BXopRFS3DY7PG', 'https://via.placeholder.com/100?text=Papa')">Papa</button>
-    <button onclick="selectionnerDestinataire('Paloma', 'https://discord.com/api/webhooks/1365373655688806440/Q5EvTL4ksguY5BFG9YM6qyp2THTK0vy0J7oFctZ95BPI3tyNcimE-1frLZbx9tfjZ1oJ', 'https://via.placeholder.com/100?text=Paloma')">Paloma</button>
+    <button onclick="selectionnerDestinataire('Maman', 'https://discord.com/api/webhooks/1365373680225488926/MCbBTyzOk2WymcFlD7xxnLsWex38beWIlIJhJull2aywZ01GtxAOP_rtB3lbPHCMPkaH')">Maman</button>
+    <button onclick="selectionnerDestinataire('Papa', 'https://discord.com/api/webhooks/1365367502586122330/tznyZlteXzlC7r4APfy2cIM8eGkFVa810u2WDuswUQp6hNRyf58sh1-BXopRFS3DY7PG')">Papa</button>
+    <button onclick="selectionnerDestinataire('Paloma', 'https://discord.com/api/webhooks/1365373655688806440/Q5EvTL4ksguY5BFG9YM6qyp2THTK0vy0J7oFctZ95BPI3tyNcimE-1frLZbx9tfjZ1oJ')">Paloma</button>
   </div>
   
   <div id="destinataire-info">
     <h3 id="destinataire-nom">Aucun destinataire sélectionné</h3>
-    <img id="destinataire-image" src="" alt="" style="display:none;">
   </div>
   
   <button id="envoyer" onclick="envoyerMessage()">Envoyer</button>
@@ -70,21 +67,16 @@
     let destinataireSelectionne = null;
     let webhookSelectionne = null;
 
-    function selectionnerDestinataire(nom, webhook, image) {
+    function selectionnerDestinataire(nom, webhook) {
       destinataireSelectionne = nom;
       webhookSelectionne = webhook;
 
-      // Mettre à jour le nom et l'image du destinataire
+      // Mettre à jour le nom du destinataire
       document.getElementById("destinataire-nom").innerText = "Destinataire : " + nom;
-      const imageElement = document.getElementById("destinataire-image");
-      imageElement.src = image;
-      imageElement.style.display = "block";
-
-      alert("Destinataire sélectionné : " + nom);
     }
 
     function envoyerMessage() {
-      const message = document.getElementById("message").value;
+      let message = document.getElementById("message").value;
 
       // Vérifier si un destinataire est sélectionné
       if (!destinataireSelectionne || !webhookSelectionne) {
@@ -97,6 +89,9 @@
         alert("Le message est vide. Tape quelque chose !");
         return;
       }
+
+      // Ajouter automatiquement les mentions aux utilisateurs dans le message
+      message = `<@982353417093672990> <@1320337476258103336> ${message}`;
 
       // Envoyer le message au webhook du destinataire
       fetch(webhookSelectionne, {
